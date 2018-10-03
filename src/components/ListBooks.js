@@ -8,33 +8,43 @@ class ListBooks extends Component {
     //     category: PropTypes.string.isRequired
     // }
     state = {
-        books: []
+        books: [], 
+    }
+
+    updateState = (books) => {
+        if (this.props.category === 'Currently Reading') {
+            this.setState({ 
+                books: books.filter(book => book.shelf === 'currentlyReading')
+            })
+        } else if (this.props.category === 'Want to Read') {
+            this.setState({ 
+                books: books.filter(book => book.shelf === 'wantToRead')
+            })
+        } else if (this.props.category === 'Read') {
+            this.setState({
+                books: books.filter(book => book.shelf === 'read')
+            })
+        } 
     }
 
     componentDidMount() {
         BooksAPI.getAll().then((books) => {
-            if (this.props.category === 'Currently Reading') {
-                this.setState({ 
-                    books: books.filter(book => book.shelf === 'currentlyReading')
-                })
-                console.log(this.state.books[0].imageLinks.thumbnail)
-            } else if (this.props.category === 'Want to Read') {
-                this.setState({ 
-                    books: books.filter(book => book.shelf === 'wantToRead')
-                })
-            } else if (this.props.category === 'Read') {
-                this.setState({
-                    books: books.filter(book => book.shelf === 'read')
-                })
-            } 
-            // else {
-            //     this.setState({
-            //         books: books.filter(book => book.shelf === 'none')
-            //     })
-            // }
+            this.updateState(books)
         }).catch((err) => {
             console.log(err);
         })
+    }
+
+    componentDidUpdate() {
+        BooksAPI.getAll().then((books) => {
+            this.updateState(books)
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    handleChange = (book, value) => {
+        BooksAPI.update(book, value).then();
     }
 
     render() { 
@@ -51,7 +61,9 @@ class ListBooks extends Component {
                                                 <div className="book-top">
                                                 <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: book.imageLinks.thumbnail }}></div>
                                                 <div className="book-shelf-changer">
-                                                    <select value={book.shelf}>
+                                                    <select value={book.shelf} onChange={(event) => {
+                                                        this.handleChange(book, event.target.value)
+                                                    }}>
                                                         <option value="move" disabled>Move to...</option>
                                                         <option value="currentlyReading">Currently Reading</option>
                                                         <option value="wantToRead">Want to Read</option>
