@@ -1,8 +1,32 @@
 import React, { Component } from 'react'
-import ListBooks from '../components/ListBooks'
 import { Link } from 'react-router-dom'
+import * as BooksAPI from '../BooksAPI'
+import ListBooks from '../components/ListBooks'
 
 class Display extends Component {
+    state = {
+        books: []
+    }
+  
+    componentDidMount() {
+      this.grabBooks()
+    }
+  
+    grabBooks() {
+      BooksAPI.getAll()
+          .then( books => { this.setState({ books} )})
+    }
+
+    handleChange = (book, value) => {
+        BooksAPI.update(book, value)
+        
+        BooksAPI.getAll()
+            .then( books => this.setState({ books }) )
+            .catch( err => {
+              return this.setState({ books: [] }) 
+            })
+    }
+
     render() {
         return (
             <div className="list-books">
@@ -11,18 +35,18 @@ class Display extends Component {
                 </div>
                 <div className="list-books-content">
                     <ListBooks 
-                        handleChange={this.props.handleChange} 
-                        books={this.props.books.filter(book => book.shelf === 'currentlyReading')} 
+                        handleChange={this.handleChange} 
+                        books={this.state.books.filter(book => book.shelf === 'currentlyReading')} 
                         category="Currently Reading"
                     />
                     <ListBooks
-                        handleChange={this.props.handleChange} 
-                        books={this.props.books.filter(book => book.shelf === 'wantToRead')} 
+                        handleChange={this.handleChange} 
+                        books={this.state.books.filter(book => book.shelf === 'wantToRead')} 
                         category="Want to Read"
                     />
                     <ListBooks 
-                        handleChange={this.props.handleChange}
-                        books={this.props.books.filter(book => book.shelf === 'read')} 
+                        handleChange={this.handleChange}
+                        books={this.state.books.filter(book => book.shelf === 'read')} 
                         category="Read"
                     />
                 </div>
