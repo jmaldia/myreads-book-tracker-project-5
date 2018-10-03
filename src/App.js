@@ -13,8 +13,7 @@ class BooksApp extends React.Component {
   }
 
   componentDidMount() {
-    BooksAPI.getAll()
-        .then( books => { this.setState({ books} )})
+    this.grabBooks()
   }
 
   handleChange = (book, value) => {
@@ -32,8 +31,13 @@ class BooksApp extends React.Component {
     this.search(this.state.keyword)
   }
 
+  grabBooks() {
+    BooksAPI.getAll()
+        .then( books => { this.setState({ books} )})
+  }
+
   search = (keyword) => {
-    if(keyword === undefined || keyword === '') {
+    if(!keyword ) {
         return this.setState({ books: [] })
     } else {
       BooksAPI.search(this.state.keyword)
@@ -71,6 +75,8 @@ class BooksApp extends React.Component {
                 books={this.state.searchResults}
                 handleChange={this.handleChange}
                 handleKeyword={this.handleKeyword}
+                grabBooks={this.grabBooks}
+                search={this.search}
               />
             )}
           />

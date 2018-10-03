@@ -4,7 +4,6 @@ import ListBooks from '../components/ListBooks'
 
 class Search extends Component {
     render () {
-        console.log(this.props.books.length);
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -12,7 +11,7 @@ class Search extends Component {
                     to="/"
                     className="close-search" 
                 >
-                    Close
+                    Closed
                 </Link>
                 <div className="search-books-input-wrapper">
                     {/*
@@ -28,15 +27,10 @@ class Search extends Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        { 
-                            (this.props.books !== undefined) && ( 
-                                <ListBooks
-                                    handleChange={this.props.handleChange} 
-                                    books={this.props.books} 
-                                    category=""
-                                />
-                            )
-                        }
+                        <ListBooks
+                            handleChange={this.props.handleChange} 
+                            books={this.props.books} 
+                        />
                     </ol>
                 </div>
             </div>
