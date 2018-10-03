@@ -1,8 +1,24 @@
 import React, { Component } from 'react'
 import ListBooks from '../components/ListBooks'
 import { Link } from 'react-router-dom'
+import * as BooksAPI from '../BooksAPI'
 
 class Display extends Component {
+    state = {
+        books: [], 
+    }
+
+    componentDidMount() {
+        BooksAPI.getAll()
+            .then((response) => {
+                this.setState({ 
+                    books: response 
+                })
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
 
     render() {
         return (
@@ -11,11 +27,9 @@ class Display extends Component {
                     <h1>MyReads</h1>
                 </div>
                 <div className="list-books-content">
-                    <div>
-                        <ListBooks category="Currently Reading"/>
-                        <ListBooks category="Want to Read"/>
-                        <ListBooks category="Read"/>
-                    </div>
+                    <ListBooks books= {this.state.books} category="Currently Reading"/>
+                    <ListBooks books= {this.state.books} category="Want to Read"/>
+                    <ListBooks books= {this.state.books} category="Read"/>
                 </div>
 
                 <div className="open-search">
@@ -23,7 +37,7 @@ class Display extends Component {
                         to="/search"
                         onClick={() => this.setState({ showSearchPage: true })}
                     >
-                    Add a book
+                        Add a book
                     </Link>
                 </div>
             </div>

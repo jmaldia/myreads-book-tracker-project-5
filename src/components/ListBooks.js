@@ -1,52 +1,41 @@
 import React, {Component} from 'react'
-import * as BooksAPI from '../BooksAPI';
+import * as BooksAPI from '../BooksAPI'
 
 class ListBooks extends Component {
-    // static propTypes = {
-    //     books: PropTypes.array.isRequired, 
-    //     category: PropTypes.string.isRequired
-    // }
     state = {
-        books: [], 
+        books: []
     }
-
+    
     componentDidMount() {
-        BooksAPI.getAll().then((books) => {
-            this.updateState(books)
-        }).catch((err) => {
-            console.log(err);
-        })
+        this.setState({ books: this.updateState() })
     }
 
-    componentDidUpdate() {
-        BooksAPI.getAll().then((books) => {
-            this.updateState(books)
-        }).catch((err) => {
-            console.log(err);
-        })
-    }
+    // componentDidUpdate() {
+    //     this.setState({ books: this.updateState() })
+    // }
 
-    updateState = (books) => {
+    updateState = () => {
+        let books = this.props.books 
+
         if (this.props.category === 'Currently Reading') {
-            this.setState({ 
-                books: books.filter(book => book.shelf === 'currentlyReading')
-            })
+            books = books.filter(book => book.shelf === 'currentlyReading')
         } else if (this.props.category === 'Want to Read') {
-            this.setState({ 
-                books: books.filter(book => book.shelf === 'wantToRead')
-            })
+            books = books.filter(book => book.shelf === 'wantToRead')
         } else if (this.props.category === 'Read') {
-            this.setState({
-                books: books.filter(book => book.shelf === 'read')
-            })
+            books = books.filter(book => book.shelf === 'read')
         } 
+
+        return books
     }
 
     handleChange = (book, value) => {
-        BooksAPI.update(book, value).then();
+        BooksAPI.update(book, value)
+            .then(response => console.log(response))
+            .catch(err => console.log(err))
     }
 
     render() { 
+        console.log(this.props.books);
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{this.props.category}</h2>
@@ -76,7 +65,8 @@ class ListBooks extends Component {
                                             </div>
                                         </li>
                                     )
-                                })
+                                }
+                            )
                         }
                     </ol> 
                 </div>    
