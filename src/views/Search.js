@@ -1,19 +1,52 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
+import ListBooks from '../components/ListBooks'
 import * as BooksAPI from '../BooksAPI'
-import ListBooks from '../components/ListBooks';
 
 class Search extends Component {
     state = {
-        books: []
+        books: [],
+        keyword: ''
+    }
+    
+    componentDidMount() {
+        BooksAPI.getAll()
+            .then( books => this.setState({ books }) )
+            .catch(err => console.log(err))
     }
 
-    query = (value) => {
-        BooksAPI.search(value)
-            .then((books) => {
-                this.setState({ books })
-            })
+    componentDidUpdate() {
+        console.log('componentDidUpdate')
+        console.log(this.state.keyword);
+        if(this.state.keyword) {
+            console.log('componentDidUpdate - search')
+            BooksAPI.search(this.state.keyword)
+            .then( books => console.log(books) )
             .catch(err => console.log(err))
+        }
+    }
+
+    handleChange = (book, value) => {
+        console.log('handleChange')
+        BooksAPI.update(book, value)
+            .then(response => console.log('Successfully changed category'))
+            .catch(err => console.log(err))
+    }
+
+    // search = (keyword) => {
+    //     if(keyword) {
+    //         BooksAPI.search(this.state.keyword.trim())
+    //             .then(response => this.setState({ results: response }))
+    //             .catch(err => this.setState({ results: [] }))
+    //     } else {
+    //         this.setState({ results: [] })
+    //     }   
+        
+    //     console.log(this.state.results) 
+    // }
+
+    handleKeyword = (keyword) => {
+        this.setState({ keyword })
     }
 
     render () {
@@ -23,7 +56,6 @@ class Search extends Component {
                 <Link
                     to="/"
                     className="close-search" 
-                    onClick={() => this.setState({ showSearchPage: false })}
                 >
                     Close
                 </Link>
@@ -36,14 +68,16 @@ class Search extends Component {
                     However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                     you don't find a specific author or title. Every search is limited by search terms.
                     */}
-                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.query(event.target.value)}/>
-
+                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleKeyword(event.target.value)}/>
                 </div>
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-
-                        <ListBooks books={this.state.books}/>
+                    <ListBooks
+                        handleChange={this.handleChange} 
+                        books={this.state.books} 
+                        category=""
+                    />
                     </ol>
                 </div>
             </div>

@@ -4,22 +4,6 @@ import { Link } from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
 
 class Display extends Component {
-    state = {
-        books: [], 
-    }
-
-    componentDidMount() {
-        BooksAPI.getAll()
-            .then((response) => {
-                this.setState({ 
-                    books: response 
-                })
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }
-
     render() {
         return (
             <div className="list-books">
@@ -27,9 +11,22 @@ class Display extends Component {
                     <h1>MyReads</h1>
                 </div>
                 <div className="list-books-content">
-                    <ListBooks books= {this.state.books} category="Currently Reading"/>
-                    <ListBooks books= {this.state.books} category="Want to Read"/>
-                    <ListBooks books= {this.state.books} category="Read"/>
+                    <ListBooks 
+                        handleChange={this.props.handleChange} 
+                        books={this.props.books.filter(book => book.shelf === 'currentlyReading')} 
+                        category="Currently Reading"
+                    />
+                    <ListBooks
+                        handleChange={this.props.handleChange} 
+                        books={this.props.books.filter(book => book.shelf === 'wantToRead')} 
+                        category="Want to Read"
+                    />
+                    <ListBooks 
+                        handleChange={this.props.handleChange} 
+
+                        books={this.props.books.filter(book => book.shelf === 'read')} 
+                        category="Read"
+                    />
                 </div>
 
                 <div className="open-search">

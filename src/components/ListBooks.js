@@ -1,76 +1,97 @@
 import React, {Component} from 'react'
-import * as BooksAPI from '../BooksAPI'
 
 class ListBooks extends Component {
-    state = {
-        books: []
-    }
-    
-    componentDidMount() {
-        this.setState({ books: this.updateState() })
-    }
-
-    // componentDidUpdate() {
-    //     this.setState({ books: this.updateState() })
+    // componentDidMount() {
+    //     if (this.props.query === '') {
+    //         BooksAPI.getAll()
+    //             .then( books => {
+    //                 this.updateState(books)
+    //             })
+    //             .catch( err => { console.log(err); })
+    //     } else {
+    //         BooksAPI.search(this.props.query)
+    //             .then( books => {
+    //                 // this.setState({ books })
+    //             })
+    //             .catch( err => console.log(err) )
+    //     }
     // }
 
-    updateState = () => {
-        let books = this.props.books 
+    // componentDidUpdate() {
+    //     if (this.props.query === '') {
+    //         BooksAPI.getAll()
+    //             .then( books => {
+    //                 this.updateState(books)
+    //             })
+    //             .catch( err => { console.log(err); })
+    //     } else {
+    //         BooksAPI.search(this.props.query)
+    //             .then( books => {
+    //                 // this.setState({ books })
+    //             })
+    //             .catch( err => console.log(err) )
+    //     }
+    // }
 
-        if (this.props.category === 'Currently Reading') {
-            books = books.filter(book => book.shelf === 'currentlyReading')
-        } else if (this.props.category === 'Want to Read') {
-            books = books.filter(book => book.shelf === 'wantToRead')
-        } else if (this.props.category === 'Read') {
-            books = books.filter(book => book.shelf === 'read')
-        } 
+    // updateState = (books) => {
+    //     let myBooks = books
 
-        return books
+    //     if (this.props.category === 'Currently Reading') {
+    //         myBooks = books.filter(book => book.shelf === 'currentlyReading')
+    //     } else if (this.props.category === 'Want to Read') {
+    //         myBooks = books.filter(book => book.shelf === 'wantToRead')
+    //     } else if (this.props.category === 'Read') {
+    //         myBooks = books.filter(book => book.shelf === 'read')
+    //     } 
+
+    //     this.setState({ books: myBooks })
+    // }
+    componentDidUpdate() {
+        
     }
 
-    handleChange = (book, value) => {
-        BooksAPI.update(book, value)
-            .then(response => console.log(response))
-            .catch(err => console.log(err))
-    }
+    // handleChange = (book, value) => {
+    //     BooksAPI.update(book, value)
+    //         .then(response => console.log('Successfully changed category'))
+    //         .catch(err => console.log(err))
+    // }
 
     render() { 
-        console.log(this.props.books);
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{this.props.category}</h2>
                 <div className="bookshelf-books">
-                    <ol className="books-grid">
-                        {
-                            this.state.books.map((book) => {
-                                return (
-                                        <li key={book.id}>
-                                            <div className="book">
-                                                <div className="book-top">
-                                                <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: book.imageLinks.thumbnail }}></div>
-                                                <div className="book-shelf-changer">
-                                                    <select value={book.shelf} onChange={(event) => {
-                                                        this.handleChange(book, event.target.value)
-                                                    }}>
-                                                        <option value="move" disabled>Move to...</option>
-                                                        <option value="currentlyReading">Currently Reading</option>
-                                                        <option value="wantToRead">Want to Read</option>
-                                                        <option value="read">Read</option>
-                                                        <option value="none">None</option>
-                                                    </select>
-                                                </div>
-                                                </div>
-                                                <div className="book-title">{book.title}</div>
-                                                <div className="book-authors">{book.authors[0]}</div>
+                <ol className="books-grid">
+                    {
+                        this.props.books.map((book) => {
+                            return (
+                                    <li key={book.id}>
+                                        <div className="book">
+                                            <div className="book-top">
+                                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: book.imageLinks.thumbnail }}></div>
+                                            <div className="book-shelf-changer">
+                                                <select value={book.shelf} onChange={(event) => {
+                                                    this.props.handleChange(book, event.target.value)
+                                                }}>
+                                                    <option value="move" disabled>Move to...</option>
+                                                    <option value="currentlyReading">Currently Reading</option>
+                                                    <option value="wantToRead">Want to Read</option>
+                                                    <option value="read">Read</option>
+                                                    <option value="none">None</option>
+                                                </select>
                                             </div>
-                                        </li>
-                                    )
-                                }
-                            )
-                        }
-                    </ol> 
-                </div>    
-            </div>         
+                                            </div>
+                                            <div className="book-title">{book.title}</div>
+                                            <div className="book-authors">{book.authors.map(author => author + '\n')}</div>
+                                        </div>
+                                    </li>
+                                )
+                            }
+                        )
+                    }
+                </ol> 
+            </div>   
+            </div>            
         )
     }
 }
