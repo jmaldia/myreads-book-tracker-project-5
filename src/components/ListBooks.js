@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import * as BooksAPI from '../BooksAPI';
-// import PropTypes from 'prop-types'
 
 class ListBooks extends Component {
     // static propTypes = {
@@ -9,22 +8,6 @@ class ListBooks extends Component {
     // }
     state = {
         books: [], 
-    }
-
-    updateState = (books) => {
-        if (this.props.category === 'Currently Reading') {
-            this.setState({ 
-                books: books.filter(book => book.shelf === 'currentlyReading')
-            })
-        } else if (this.props.category === 'Want to Read') {
-            this.setState({ 
-                books: books.filter(book => book.shelf === 'wantToRead')
-            })
-        } else if (this.props.category === 'Read') {
-            this.setState({
-                books: books.filter(book => book.shelf === 'read')
-            })
-        } 
     }
 
     componentDidMount() {
@@ -41,6 +24,22 @@ class ListBooks extends Component {
         }).catch((err) => {
             console.log(err);
         })
+    }
+
+    updateState = (books) => {
+        if (this.props.category === 'Currently Reading') {
+            this.setState({ 
+                books: books.filter(book => book.shelf === 'currentlyReading')
+            })
+        } else if (this.props.category === 'Want to Read') {
+            this.setState({ 
+                books: books.filter(book => book.shelf === 'wantToRead')
+            })
+        } else if (this.props.category === 'Read') {
+            this.setState({
+                books: books.filter(book => book.shelf === 'read')
+            })
+        } 
     }
 
     handleChange = (book, value) => {
