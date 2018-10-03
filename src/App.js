@@ -7,13 +7,14 @@ import './App.css'
 
 class BooksApp extends React.Component {
   state = {
-      books: []
+      books: [], 
+      searchResults: [],
+      keyword: ''
   }
 
   componentDidMount() {
-      BooksAPI.getAll()
-          .then( books => { this.setState({ books} )})
-          .catch( err => { console.log(err); })
+    BooksAPI.getAll()
+        .then( books => { this.setState({ books} )})
   }
 
   handleChange = (book, value) => {
@@ -25,6 +26,28 @@ class BooksApp extends React.Component {
             return this.setState({ books: [] }) 
           })
   }
+
+  handleKeyword = (keyword) => {
+    this.setState({ keyword })
+    this.search(this.state.keyword)
+  }
+
+  search = (keyword) => {
+    if(keyword === undefined || keyword === '') {
+        return this.setState({ books: [] })
+    } else {
+      BooksAPI.search(this.state.keyword)
+          .then(response => {
+            if(response.error) {
+              return this.setState({ searchResults: [] })
+            }
+            return this.setState({ searchResults: response })
+          })
+          .catch(err => {
+            return this.setState({ searchResults: [] })
+          })
+    }   
+}
 
   render() {
     return (
@@ -40,7 +63,17 @@ class BooksApp extends React.Component {
               />
             )}
           />
-          <Route exact path={'/search'} component={Search} />
+          <Route 
+            exact 
+            path={'/search'} 
+            render={() => (
+              <Search
+                books={this.state.searchResults}
+                handleChange={this.handleChange}
+                handleKeyword={this.handleKeyword}
+              />
+            )}
+          />
         </Switch> 
       </div>
     )

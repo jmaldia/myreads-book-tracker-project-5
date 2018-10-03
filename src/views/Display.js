@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import ListBooks from '../components/ListBooks'
 import { Link } from 'react-router-dom'
-import * as BooksAPI from '../BooksAPI'
 
 class Display extends Component {
     render() {
@@ -22,8 +21,7 @@ class Display extends Component {
                         category="Want to Read"
                     />
                     <ListBooks 
-                        handleChange={this.props.handleChange} 
-
+                        handleChange={this.props.handleChange}
                         books={this.props.books.filter(book => book.shelf === 'read')} 
                         category="Read"
                     />
