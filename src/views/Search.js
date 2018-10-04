@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
 import ListBooks from '../components/ListBooks'
 
+let tempBooks = []
+
 class Search extends Component {
     state = {
         // allBooks: [],
@@ -26,10 +28,11 @@ class Search extends Component {
   
     handleKeyword = (keyword) => {
         this.setState({ keyword }, this.search(keyword))
+        tempBooks = []
     }
 
     search = (keyword) => {
-        let tempBooks = []
+        console.log(keyword)
 
         if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
             return this.setState({ searchResults: [] })
@@ -39,7 +42,7 @@ class Search extends Component {
                     if(searchedBooks.error) {
                         return this.setState({ searchResults: [] })
                     }
-
+                    
                     // this.state.allBooks.forEach(book => {
                     //     searchedBooks.forEach(searchedBook => {
                     //         if (searchedBook.id === book.id) {
@@ -50,8 +53,8 @@ class Search extends Component {
 
                     searchedBooks.forEach(searchedBook => {
                         BooksAPI.get(searchedBook.id).then((book) => {
-                            tempBooks.push(book)
-                            console.log(tempBooks);
+                            console.log(book);
+                            return tempBooks.push(book)
                         })
                     })
 
@@ -82,7 +85,7 @@ class Search extends Component {
                     However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                     you don't find a specific author or title. Every search is limited by search terms.
                     */}
-                    <input type="text" placeholder="Search by title or author" onInput={(event) => this.handleKeyword(event.target.value)}/>
+                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleKeyword(event.target.value)}/>
                 </div>
                 </div>
                 <div className="search-books-results">
