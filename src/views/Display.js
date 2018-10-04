@@ -9,12 +9,8 @@ class Display extends Component {
     }
   
     componentDidMount() {
-      this.grabBooks()
-    }
-  
-    grabBooks() {
-      BooksAPI.getAll()
-          .then( books => { this.setState({ books} )})
+        BooksAPI.getAll()
+        .then( books => { this.setState({ books} )})
     }
 
     handleChange = (book, value) => {

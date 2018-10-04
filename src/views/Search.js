@@ -5,48 +5,52 @@ import ListBooks from '../components/ListBooks'
 
 class Search extends Component {
     state = {
-        books: [], 
+        books: [],
         searchResults: [],
         keyword: ''
     }
   
     componentDidMount() {
-      this.grabBooks()
+        this.search(this.state.keyword)
+        BooksAPI.getAll()
+            .then( books => { this.setState({ books }) } )
+        console.log(this.state.books);
     }
   
     handleChange = (book, value) => {
-        BooksAPI.update(book, value)
-        
-        BooksAPI.getAll()
-            .then( books => this.setState({ books }) )
-            .catch( err => {
-              return this.setState({ books: [] }) 
-            })
+        BooksAPI.update(book, value).then(this.search(this.state.keyword))
     }
   
     handleKeyword = (keyword) => {
-      this.setState({ keyword })
-      this.search(this.state.keyword)
+        this.setState({ keyword })
+        this.search(keyword)
+        console.log(this.state.searchResults);
     }
-  
-    grabBooks() {
-      BooksAPI.getAll()
-          .then( books => { this.setState({ books }) } )
-    }
-  
+
     search = (keyword) => {
-        if(!keyword ) {
-            return this.setState({ books: [] })
+        let tempBooks = []
+
+        if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
+            return this.setState({ searchResults: [] })
         } else {
             BooksAPI.search(this.state.keyword)
-                .then(response => {
-                if(response.error) {
-                    return this.setState({ searchResults: [] })
-                }
-                return this.setState({ searchResults: response })
+                .then(searchedBooks => {
+                    if(searchedBooks.error) {
+                        return this.setState({ searchResults: [] })
+                    }
+
+                    searchedBooks.map(searchedBook => {
+                        return this.state.books.forEach(book => {
+                            if (searchedBook.id === book.id) {
+                                tempBooks.push(book)
+                            }
+                        })
+                    })
+
+                    return this.setState({ searchResults: tempBooks })
                 })
                 .catch(err => {
-                return this.setState({ searchResults: [] })
+                    return this.setState({ searchResults: [] })
                 })
         }   
     }
@@ -70,7 +74,7 @@ class Search extends Component {
                     However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                     you don't find a specific author or title. Every search is limited by search terms.
                     */}
-                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleKeyword(event.target.value)}/>
+                    <input type="text" placeholder="Search by title or author" onInput={(event) => this.handleKeyword(event.target.value)}/>
                 </div>
                 </div>
                 <div className="search-books-results">
