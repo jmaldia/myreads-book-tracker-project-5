@@ -11,23 +11,24 @@ class Search extends Component {
     }
   
     componentDidMount() {
-        this.search(this.state.keyword)
+        // this.search(this.state.keyword)
         BooksAPI.getAll()
-            .then( books => { this.setState({ allBooks : books }) } )
+            .then( books => { 
+                this.setState({ allBooks : books })
+        }).then(() => console.log(this.state.allBooks))
     }
   
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
-        this.search(this.state.keyword)
+            .then(this.search(this.state.keyword))
+        
     }
   
     handleKeyword = (keyword) => {
-        this.setState({ keyword })
-        this.search(keyword)
+        this.setState({ keyword }, this.search(keyword))
     }
 
     search = (keyword) => {
-        console.log(this.state.allBooks);
         let tempBooks = []
 
         if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
