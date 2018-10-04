@@ -5,17 +5,17 @@ import ListBooks from '../components/ListBooks'
 
 class Search extends Component {
     state = {
-        allBooks: [],
+        // allBooks: [],
         searchResults: [],
         keyword: ''
     }
   
     componentDidMount() {
         // this.search(this.state.keyword)
-        BooksAPI.getAll()
-            .then( books => { 
-                this.setState({ allBooks : books })
-        }).then(() => console.log(this.state.allBooks))
+        // BooksAPI.getAll()
+        //     .then( books => { 
+        //         this.setState({ allBooks : books })
+        //     })
     }
   
     handleChange = (book, value) => {
@@ -34,17 +34,24 @@ class Search extends Component {
         if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
             return this.setState({ searchResults: [] })
         } else {
-            BooksAPI.search(this.state.keyword)
+            BooksAPI.search(keyword)
                 .then(searchedBooks => {
                     if(searchedBooks.error) {
                         return this.setState({ searchResults: [] })
                     }
 
-                    this.state.allBooks.forEach(book => {
-                        searchedBooks.forEach(searchedBook => {
-                            if (searchedBook.id === book.id) {
-                                tempBooks.push(book)
-                            }
+                    // this.state.allBooks.forEach(book => {
+                    //     searchedBooks.forEach(searchedBook => {
+                    //         if (searchedBook.id === book.id) {
+                    //             tempBooks.push(book)
+                    //         }
+                    //     })
+                    // })
+
+                    searchedBooks.forEach(searchedBook => {
+                        BooksAPI.get(searchedBook.id).then((book) => {
+                            tempBooks.push(book)
+                            console.log(tempBooks);
                         })
                     })
 
