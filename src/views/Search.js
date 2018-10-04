@@ -5,7 +5,7 @@ import ListBooks from '../components/ListBooks'
 
 class Search extends Component {
     state = {
-        books: [],
+        allBooks: [],
         searchResults: [],
         keyword: ''
     }
@@ -13,21 +13,21 @@ class Search extends Component {
     componentDidMount() {
         this.search(this.state.keyword)
         BooksAPI.getAll()
-            .then( books => { this.setState({ books }) } )
-        console.log(this.state.books);
+            .then( books => { this.setState({ allBooks : books }) } )
     }
   
     handleChange = (book, value) => {
-        BooksAPI.update(book, value).then(this.search(this.state.keyword))
+        BooksAPI.update(book, value)
+        this.search(this.state.keyword)
     }
   
     handleKeyword = (keyword) => {
         this.setState({ keyword })
         this.search(keyword)
-        console.log(this.state.searchResults);
     }
 
     search = (keyword) => {
+        console.log(this.state.allBooks);
         let tempBooks = []
 
         if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
@@ -39,8 +39,8 @@ class Search extends Component {
                         return this.setState({ searchResults: [] })
                     }
 
-                    searchedBooks.map(searchedBook => {
-                        return this.state.books.forEach(book => {
+                    this.state.allBooks.forEach(book => {
+                        searchedBooks.forEach(searchedBook => {
                             if (searchedBook.id === book.id) {
                                 tempBooks.push(book)
                             }

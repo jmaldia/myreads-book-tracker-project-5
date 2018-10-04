@@ -10,17 +10,13 @@ class Display extends Component {
   
     componentDidMount() {
         BooksAPI.getAll()
-        .then( books => { this.setState({ books} )})
+            .then( books => { this.setState({ books} )})
     }
 
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
-        
         BooksAPI.getAll()
             .then( books => this.setState({ books }) )
-            .catch( err => {
-              return this.setState({ books: [] }) 
-            })
     }
 
     render() {
