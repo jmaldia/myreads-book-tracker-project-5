@@ -3,32 +3,28 @@ import { Link } from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
 import ListBooks from '../components/ListBooks'
 
-// let tempBooks = []
-
 class Search extends Component {
     state = {
-        // allBooks: [],
         searchResults: [],
         keyword: ''
     }
   
-    componentDidMount() {
-    }
-  
+    // This manages the changes in category for the searched items
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
             .then(this.search(this.state.keyword))
         
     }
-  
+    
+    // This updates this.state.keyword when the search field is updated
+    // It calls on the search method to perform the search
     handleKeyword = (keyword) => {
         this.setState({ keyword }, this.search(keyword))
-        // tempBooks = []
     }
 
+    // Upon getting a keyword, this method calls on the search method from the API
+    // It returns a collection of books based on the search
     search = (keyword) => {
-        console.log(keyword)
-
         if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
             return this.setState({ searchResults: [] })
         } else {
@@ -45,11 +41,11 @@ class Search extends Component {
                         return book
                     })
 
-                    return this.setState({
+                    this.setState({
                         searchResults: temp
-                    })
+                    }, this.forceUpdate())
 
-                    // return this.setState({ searchResults })
+                    return this.state.searchResults
                 })
                 .catch(err => {
                     return this.setState({ searchResults: [] })

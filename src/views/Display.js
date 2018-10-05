@@ -7,12 +7,14 @@ class Display extends Component {
     state = {
         books: []
     }
-  
+    
+    // This loads the books in the bookshelf
     componentDidMount() {
         BooksAPI.getAll()
             .then( books => { this.setState({ books }) } )
     }
 
+    // When the category is updated, this is the method that's called to manage the changes
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
             .then(() => {
@@ -24,6 +26,7 @@ class Display extends Component {
     }
 
     render() {
+        // This renders the bookshelf per category
         return (
             <div className="list-books">
                 <div className="list-books-title">

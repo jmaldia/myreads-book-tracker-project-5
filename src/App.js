@@ -6,6 +6,7 @@ import './App.css'
 
 class BooksApp extends React.Component {
   render() {
+    // Below uses react-router-dom to display the Main page and Search pages
     return (
       <div className="app">
         <Switch>
@@ -26,27 +27,3 @@ class BooksApp extends React.Component {
 }
 
 export default BooksApp
-
-// <Route 
-//             exact 
-//             path={'/'} 
-//             render={() => (
-//               <Display
-//                 books={this.state.books}
-//                 handleChange={this.handleChange}
-//               />
-//             )}
-//           />
-//           <Route 
-//             exact 
-//             path={'/search'} 
-//             render={() => (
-//               <Search
-//                 books={this.state.searchResults}
-//                 handleChange={this.handleChange}
-//                 handleKeyword={this.handleKeyword}
-//                 grabBooks={this.grabBooks}
-//                 search={this.search}
-//               />
-//             )}
-//           />

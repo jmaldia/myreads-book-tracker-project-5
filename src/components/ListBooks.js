@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 
 class ListBooks extends Component {
     render() { 
+        // This Component loops through the book collection provided by the Search or Display page
+        // The data is provided as props
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{this.props.category}</h2>
