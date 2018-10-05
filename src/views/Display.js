@@ -17,12 +17,38 @@ class Display extends Component {
     // When the category is updated, this is the method that's called to manage the changes
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
-            .then(() => {
-                BooksAPI.getAll()
-                    .then( books => this.setState({ books }) )
-                }
+            .then(
+                // (books) => {
+                // books.currentlyReading.forEach(bookId => {
+                //     this.state.books.forEach(book => {
+                //         if(book.id === bookId && book.shelf !== 'currentlyReading') {
+                //             book.shelf = 'currentlyReading'
+                //         }
+                //         console.log(book)
+                //     })
+                // })
+                // books.wantToRead.forEach(bookId => {
+                //     this.state.books.forEach(book => {
+                //         if(book.id === bookId && book.shelf !== 'wantToRead') {
+                //             book.shelf = 'wantToRead'
+                //         }
+                //         console.log(book)
+                //     })
+                // })
+                // books.read.forEach(bookId => {
+                //     this.state.books.forEach(book => {
+                //         if(book.id === bookId && book.shelf !== 'read') {
+                //             book.shelf = 'read'
+                //         }
+                //         console.log(book)
+                //     })
+                // })
+                // console.log(this.state.books);
+                // return this.setState({ books })
+            // }
             )
-        
+            BooksAPI.getAll()
+            .then( books => { this.setState({ books }) } )
     }
 
     render() {
@@ -51,12 +77,7 @@ class Display extends Component {
                 </div>
 
                 <div className="open-search">
-                    <Link
-                        to="/search"
-                        onClick={() => this.setState({ showSearchPage: true })}
-                    >
-                        Add a book
-                    </Link>
+                    <Link to="/search">Add a book</Link>
                 </div>
             </div>
         )
