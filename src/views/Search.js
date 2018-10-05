@@ -8,12 +8,11 @@ class Search extends Component {
         searchResults: [],
         keyword: ''
     }
-  
+
     // This manages the changes in category for the searched items
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
             .then(this.search(this.state.keyword))
-        
     }
     
     // This updates this.state.keyword when the search field is updated
@@ -41,11 +40,7 @@ class Search extends Component {
                         return book
                     })
 
-                    this.setState({
-                        searchResults: temp
-                    }, this.forceUpdate())
-
-                    return this.state.searchResults
+                    return this.setState({ searchResults: temp }, this.forceUpdate())
                 })
                 .catch(err => {
                     return this.setState({ searchResults: [] })
