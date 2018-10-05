@@ -1,12 +1,18 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
-import ListBooks from '../components/ListBooks'
+import Book from '../components/Book'
 
 class Search extends Component {
     state = {
+        books: [],
         searchResults: [],
         keyword: ''
+    }
+
+    componentDidMount() {
+        BooksAPI.getAll()
+            .then( books => { this.setState({ books }) } )
     }
 
     // This manages the changes in category for the searched items
@@ -33,14 +39,20 @@ class Search extends Component {
                         return this.setState({ searchResults: [] })
                     }
 
-                    let temp = results.map(book => {
-                        BooksAPI.get(book.id).then((bookWithID) => {
-                            book.shelf = bookWithID.shelf
+                    this.setState({ searchResults: results })
+
+                    this.state.searchResults.forEach(searchedBook => {
+                        this.state.books.filter(book => {
+                            if (book.id === searchedBook.id) {
+                                searchedBook.shelf = book.shelf
+                            } else {
+                                searchedBook.shelf = 'none'
+                            }
+                            return book
                         })
-                        return book
                     })
 
-                    return this.setState({ searchResults: temp }, this.forceUpdate())
+                    return results
                 })
                 .catch(err => {
                     return this.setState({ searchResults: [] })
@@ -64,10 +76,19 @@ class Search extends Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        <ListBooks
-                            handleChange={this.handleChange} 
-                            books={this.state.searchResults} 
-                        />
+                    {
+                        this.state.searchResults.map((book) => {
+                            return (
+                                <li key={book.id}>
+                                    <Book book={book} handleChange={this.handleChange} />
+                                </li>
+                            )
+                        })
+                        // <ListBooks
+                        //     handleChange={this.handleChange} 
+                        //     books={this.state.searchResults} 
+                        // />
+                    } 
                     </ol>
                 </div>
             </div>

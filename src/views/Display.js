@@ -5,50 +5,56 @@ import ListBooks from '../components/ListBooks'
 
 class Display extends Component {
     state = {
-        books: []
+        books: [], 
+        currentlyReadingBooks: [], 
+        wantToReadBooks:[],
+        readBooks:[]
     }
     
     // This loads the books in the bookshelf
     componentDidMount() {
         BooksAPI.getAll()
             .then( books => { this.setState({ books }) } )
+            .then( books => this.filterBooks())
+            .catch(err => this.setState({ books: [] }) )
+    }
+    
+    filterBooks() {
+        this.setState({
+            currentlyReadingBooks: this.state.books.filter(book => {
+                return book.shelf === 'currentlyReading'
+            }),
+            wantToReadBooks: this.state.books.filter(book => {
+                return book.shelf === 'wantToRead'
+            }),
+            readBooks: this.state.books.filter(book => {
+                return book.shelf === 'read'
+            })
+        })
     }
 
     // When the category is updated, this is the method that's called to manage the changes
-    handleChange = (book, value) => {
-        BooksAPI.update(book, value)
-            .then(
-                // (books) => {
-                // books.currentlyReading.forEach(bookId => {
-                //     this.state.books.forEach(book => {
-                //         if(book.id === bookId && book.shelf !== 'currentlyReading') {
-                //             book.shelf = 'currentlyReading'
-                //         }
-                //         console.log(book)
-                //     })
-                // })
-                // books.wantToRead.forEach(bookId => {
-                //     this.state.books.forEach(book => {
-                //         if(book.id === bookId && book.shelf !== 'wantToRead') {
-                //             book.shelf = 'wantToRead'
-                //         }
-                //         console.log(book)
-                //     })
-                // })
-                // books.read.forEach(bookId => {
-                //     this.state.books.forEach(book => {
-                //         if(book.id === bookId && book.shelf !== 'read') {
-                //             book.shelf = 'read'
-                //         }
-                //         console.log(book)
-                //     })
-                // })
-                // console.log(this.state.books);
-                // return this.setState({ books })
-            // }
-            )
-            BooksAPI.getAll()
-            .then( books => { this.setState({ books }) } )
+    handleChange = (book, newCategory) => {
+        BooksAPI.update(book, newCategory)
+            .then( books => {
+                books.currentlyReading.forEach(bookID => {
+                    this.state.books.forEach(book => {
+                        if (book.id === bookID) book.shelf = 'currentlyReading'
+                    })
+                })
+                books.wantToRead.forEach(bookID => {
+                    this.state.books.forEach(book => {
+                        if (book.id === bookID) book.shelf = 'wantToRead'
+                    })
+                })
+                books.read.forEach(bookID => {
+                    this.state.books.forEach(book => {
+                        if (book.id === bookID) book.shelf = 'read'
+                    })
+                })
+                this.filterBooks()
+                
+            }).catch(err => this.setState({ books: [] }) )
     }
 
     render() {
@@ -61,17 +67,17 @@ class Display extends Component {
                 <div className="list-books-content">
                     <ListBooks 
                         handleChange={this.handleChange} 
-                        books={this.state.books.filter(book => book.shelf === 'currentlyReading')} 
+                        books={this.state.currentlyReadingBooks} 
                         category="Currently Reading"
                     />
                     <ListBooks
                         handleChange={this.handleChange} 
-                        books={this.state.books.filter(book => book.shelf === 'wantToRead')} 
+                        books={this.state.wantToReadBooks} 
                         category="Want to Read"
                     />
                     <ListBooks 
                         handleChange={this.handleChange}
-                        books={this.state.books.filter(book => book.shelf === 'read')} 
+                        books={this.state.readBooks} 
                         category="Read"
                     />
                 </div>
