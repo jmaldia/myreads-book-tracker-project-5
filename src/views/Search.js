@@ -1,10 +1,54 @@
 import React, {Component} from 'react'
 import { Link } from 'react-router-dom'
+import * as BooksAPI from '../BooksAPI'
 import ListBooks from '../components/ListBooks'
 
 class Search extends Component {
+    state = {
+        searchResults: [],
+        keyword: ''
+    }
+
+    // This manages the changes in category for the searched items
+    handleChange = (book, value) => {
+        BooksAPI.update(book, value)
+            .then(this.search(this.state.keyword))
+    }
+    
+    // This updates this.state.keyword when the search field is updated
+    // It calls on the search method to perform the search
+    handleKeyword = (keyword) => {
+        this.setState({ keyword }, this.search(keyword))
+    }
+
+    // Upon getting a keyword, this method calls on the search method from the API
+    // It returns a collection of books based on the search
+    search = (keyword) => {
+        if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
+            return this.setState({ searchResults: [] })
+        } else {
+            BooksAPI.search(keyword)
+                .then(results => {
+                    if(results.error) {
+                        return this.setState({ searchResults: [] })
+                    }
+
+                    let temp = results.map(book => {
+                        BooksAPI.get(book.id).then((bookWithID) => {
+                            book.shelf = bookWithID.shelf
+                        })
+                        return book
+                    })
+
+                    return this.setState({ searchResults: temp }, this.forceUpdate())
+                })
+                .catch(err => {
+                    return this.setState({ searchResults: [] })
+                })
+        }   
+    }
+    
     render () {
-        console.log(this.props.books.length);
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -12,31 +56,18 @@ class Search extends Component {
                     to="/"
                     className="close-search" 
                 >
-                    Close
+                    Closed
                 </Link>
                 <div className="search-books-input-wrapper">
-                    {/*
-                    NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                    You can find these search terms here:
-                    https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                    However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                    you don't find a specific author or title. Every search is limited by search terms.
-                    */}
-                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.props.handleKeyword(event.target.value)}/>
+                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleKeyword(event.target.value)}/>
                 </div>
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
-                        { 
-                            (this.props.books !== undefined) && ( 
-                                <ListBooks
-                                    handleChange={this.props.handleChange} 
-                                    books={this.props.books} 
-                                    category=""
-                                />
-                            )
-                        }
+                        <ListBooks
+                            handleChange={this.handleChange} 
+                            books={this.state.searchResults} 
+                        />
                     </ol>
                 </div>
             </div>
