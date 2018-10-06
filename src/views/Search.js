@@ -27,6 +27,19 @@ class Search extends Component {
         this.setState({ keyword }, this.search(keyword))
     }
 
+    setShelf() {
+        this.state.searchResults.forEach(searchedBook => {
+            this.state.books.filter(book => {
+                if (book.id === searchedBook.id) {
+                    searchedBook.shelf = book.shelf
+                } else {
+                    searchedBook.shelf = 'none'
+                }
+                return book
+            })
+        })
+    }
+
     // Upon getting a keyword, this method calls on the search method from the API
     // It returns a collection of books based on the search
     search = (keyword) => {
@@ -39,18 +52,9 @@ class Search extends Component {
                         return this.setState({ searchResults: [] })
                     }
 
-                    this.setState({ searchResults: results })
+                    this.setState({ searchResults: results }, this.setShelf())
 
-                    this.state.searchResults.forEach(searchedBook => {
-                        this.state.books.filter(book => {
-                            if (book.id === searchedBook.id) {
-                                searchedBook.shelf = book.shelf
-                            } else {
-                                searchedBook.shelf = 'none'
-                            }
-                            return book
-                        })
-                    })
+                    
 
                     return results
                 })
