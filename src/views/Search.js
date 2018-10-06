@@ -18,31 +18,24 @@ class Search extends Component {
     // This manages the changes in category for the searched items
     handleChange = (book, value) => {
         BooksAPI.update(book, value)
-            .then(this.search(this.state.keyword))
+            .then((respons) => {
+                book.shelf = value
+                this.setState((prevState) => ({
+                    searchResults: prevState.searchResults.filter(filteredBook => filteredBook.id !== book.id).concat([book])
+                }))
+            })
     }
     
     // This updates this.state.keyword when the search field is updated
     // It calls on the search method to perform the search
     handleKeyword = (keyword) => {
-        this.setState({ keyword }, this.search(keyword))
-    }
-
-    setShelf() {
-        this.state.searchResults.forEach(searchedBook => {
-            this.state.books.filter(book => {
-                if (book.id === searchedBook.id) {
-                    searchedBook.shelf = book.shelf
-                } else {
-                    searchedBook.shelf = 'none'
-                }
-                return book
-            })
-        })
+        this.setState({ keyword }, this.search)
     }
 
     // Upon getting a keyword, this method calls on the search method from the API
     // It returns a collection of books based on the search
-    search = (keyword) => {
+    search = () => {
+        let keyword = this.state.keyword
         if(!keyword || keyword === undefined || keyword === '' || keyword === null || keyword.length < 1) {
             return this.setState({ searchResults: [] })
         } else {
@@ -52,11 +45,16 @@ class Search extends Component {
                         return this.setState({ searchResults: [] })
                     }
 
-                    this.setState({ searchResults: results }, this.setShelf())
+                    results.forEach( bookResult => {
+                        let filteredBook = this.state.books.filter( book =>  book.id === bookResult.id)
+                        if (filteredBook[0]) {
+                            bookResult.shelf = filteredBook[0].shelf
+                        } else {
+                            bookResult.shelf = 'none'
+                        }
+                    })
 
-                    
-
-                    return results
+                    return this.setState({ searchResults: results })
                 })
                 .catch(err => {
                     return this.setState({ searchResults: [] })
@@ -68,30 +66,26 @@ class Search extends Component {
         return (
             <div className="search-books">
                 <div className="search-books-bar">
-                <Link
-                    to="/"
-                    className="close-search" 
-                >
-                    Closed
-                </Link>
-                <div className="search-books-input-wrapper">
-                    <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleKeyword(event.target.value)}/>
+                    <Link to="/" className="close-search">Closed</Link>
+                    <div className="search-books-input-wrapper">
+                        <input type="text" placeholder="Search by title or author" onChange={(event) => this.handleKeyword(event.target.value)}/>
+                    </div>
                 </div>
-                </div>
+
                 <div className="search-books-results">
                     <ol className="books-grid">
                     {
-                        this.state.searchResults.map((book) => {
+                        this.state.searchResults.map(searchResult => {
                             return (
-                                <li key={book.id}>
-                                    <Book book={book} handleChange={this.handleChange} />
+                                <li key={searchResult.id}>
+                                    <Book 
+                                        book={searchResult} 
+                                        handleChange={this.handleChange} 
+                                        shelf={searchResult.shelf}
+                                    />
                                 </li>
                             )
                         })
-                        // <ListBooks
-                        //     handleChange={this.handleChange} 
-                        //     books={this.state.searchResults} 
-                        // />
                     } 
                     </ol>
                 </div>

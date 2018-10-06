@@ -68,17 +68,17 @@ class Display extends Component {
                     <ListBooks 
                         handleChange={this.handleChange} 
                         books={this.state.currentlyReadingBooks} 
-                        category="currentlyReading"
+                        category="Currently Reading"
                     />
                     <ListBooks
                         handleChange={this.handleChange} 
                         books={this.state.wantToReadBooks} 
-                        category="wantToRead"
+                        category="Want to Read"
                     />
                     <ListBooks 
                         handleChange={this.handleChange}
                         books={this.state.readBooks} 
-                        category="read"
+                        category="Read"
                     />
                 </div>
 
